@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AI Object Detection</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<h1>🚀 AI Object Detection</h1>
+
+<input type="file" id="imageInput">
+<button onclick="uploadImage()">Detect Objects</button>
+<button onclick="describeImage()">Describe Image</button>
+
+<div id="loader" class="hidden">Processing...</div>
+
+<canvas id="canvas"></canvas>
+
+<p id="error"></p>
+<p id="description"></p>
+<p id="imageDescription"></p>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
