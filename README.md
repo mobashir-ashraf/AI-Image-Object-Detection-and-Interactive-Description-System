@@ -30,17 +30,21 @@ https://github.com/mobashir-ashraf/AI-Image-Object-Detection-and-Interactive-Des
 📂 Project Structure
 
 AI-Image-Object-Detection-and-Interactive-Description-System/
-    static/
-        script.js
-        style.css
-    templates/
-        index.html
-    uploads/
-        .gitkeep
-    app.py
-    requirements.txt
-    Procfile
-    README.md
+│
+├── static/
+│   ├── script.js
+│   └── style.css
+│
+├── templates/
+│   └── index.html
+│
+├── uploads/
+│   └── .gitkeep
+│
+├── app.py
+├── requirements.txt
+├── Procfile
+└── README.md
 
 ---
 
