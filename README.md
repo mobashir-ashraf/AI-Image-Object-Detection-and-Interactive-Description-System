@@ -52,25 +52,25 @@ AI-Image-Object-Detection-and-Interactive-Description-System/
 
 1. Clone the repository
 
-git clone https://github.com/mobashir-ashraf/AI-Image-Object-Detection-and-Interactive-Description-System.git
-cd AI-Image-Object-Detection-and-Interactive-Description-System
+  git clone https://github.com/mobashir-ashraf/AI-Image-Object-Detection-and-Interactive-Description-System.git
+  cd AI-Image-Object-Detection-and-Interactive-Description-System
 
 2. Create virtual environment (recommended)
 
-python -m venv venv
-venv\Scripts\activate
+  python -m venv venv
+  venv\Scripts\activate
 
 3. Install dependencies
 
-pip install -r requirements.txt
+  pip install -r requirements.txt
 
 4. Run the application
 
-python app.py
+  python app.py
 
 5. Open in browser
 
-http://127.0.0.1:5000
+  http://127.0.0.1:5000
 
 ---
 
