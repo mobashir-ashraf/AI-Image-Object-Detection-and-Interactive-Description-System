@@ -3,8 +3,46 @@ let ctx = canvas.getContext("2d")
 
 let objects = []
 let img = new Image()
-
 let input = document.getElementById("imageInput")
+let voiceEnabled = true
+
+function toggleTheme() {
+    document.body.classList.toggle("dark")
+}
+
+function toggleVoice() {
+    voiceEnabled = !voiceEnabled
+
+    let btn = document.getElementById("voiceBtn")
+    let status = document.getElementById("voiceStatus")
+
+    if (voiceEnabled) {
+        btn.classList.remove("muted")
+        btn.classList.add("active")
+        status.innerText = "ON"
+    } else {
+        btn.classList.add("muted")
+        btn.classList.remove("active")
+        status.innerText = "OFF"
+    }
+}
+
+let dropArea = document.getElementById("dropArea")
+
+dropArea.addEventListener("dragover", (e) => {
+    e.preventDefault()
+    dropArea.style.background = "#e3f2fd"
+})
+
+dropArea.addEventListener("dragleave", () => {
+    dropArea.style.background = ""
+})
+
+dropArea.addEventListener("drop", (e) => {
+    e.preventDefault()
+    input.files = e.dataTransfer.files
+    previewImage()
+})
 
 input.addEventListener("change", previewImage)
 
@@ -38,19 +76,24 @@ async function uploadImage() {
 
     objects = await response.json()
 
-    if (objects.error) {
-        document.getElementById("loader").classList.add("hidden")
-        document.getElementById("error").innerText = objects.error
-        return
-    }
+    document.getElementById("loader").classList.add("hidden")
 
     drawBoxes()
+
+    document.getElementById("statsText").innerText =
+        "Detected Objects: " + objects.length
 }
 
 function drawBoxes() {
     ctx.drawImage(img, 0, 0)
+
     objects.forEach(obj => {
+        ctx.strokeStyle = "lime"
+        ctx.lineWidth = 2
         ctx.strokeRect(obj.x, obj.y, obj.width, obj.height)
+
+        ctx.fillStyle = "lime"
+        ctx.fillText(obj.name, obj.x, obj.y - 5)
     })
 }
 
@@ -69,11 +112,15 @@ canvas.addEventListener("click", function (event) {
             ctx.lineWidth = 3
             ctx.strokeRect(obj.x, obj.y, obj.width, obj.height)
 
-            document.getElementById("description").innerText =
-                obj.name + " (" + obj.confidence + ") : " + obj.description
+            let text = obj.name + " (" + obj.confidence + ") : " + obj.description
 
-            let speech = new SpeechSynthesisUtterance(obj.description)
-            window.speechSynthesis.speak(speech)
+            document.getElementById("description").innerText = text
+
+            if (voiceEnabled) {
+                window.speechSynthesis.cancel()
+                let speech = new SpeechSynthesisUtterance(obj.description)
+                window.speechSynthesis.speak(speech)
+            }
         }
     })
 })
@@ -81,8 +128,12 @@ canvas.addEventListener("click", function (event) {
 function describeImage() {
     let names = [...new Set(objects.map(o => o.name))]
     let text = "This image contains " + names.join(", ")
+
     document.getElementById("imageDescription").innerText = text
 
-    let speech = new SpeechSynthesisUtterance(text)
-    window.speechSynthesis.speak(speech)
+    if (voiceEnabled) {
+        window.speechSynthesis.cancel()
+        let speech = new SpeechSynthesisUtterance(text)
+        window.speechSynthesis.speak(speech)
+    }
 }
