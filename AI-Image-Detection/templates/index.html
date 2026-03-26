@@ -3,24 +3,49 @@
 
 <head>
     <title>AI Image Object Detection and Interactive Description System</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
 
-    <h1>🚀 AI Object Detection</h1>
+    <div class="container">
 
-    <input type="file" id="imageInput">
-    <button onclick="uploadImage()">Detect Objects</button>
-    <button onclick="describeImage()">Describe Image</button>
+        <h1>🚀 AI Object Detection</h1>
 
-    <div id="loader" class="hidden">Processing...</div>
+        <div class="top-bar">
+            <button onclick="toggleTheme()">🌙</button>
 
-    <canvas id="canvas"></canvas>
+            <button id="voiceBtn" onclick="toggleVoice()" class="active">
+                🎤 <span id="voiceStatus">ON</span>
+            </button>
+        </div>
 
-    <p id="error"></p>
-    <p id="description"></p>
-    <p id="imageDescription"></p>
+        <div class="upload-box" id="dropArea">
+            <p>Drag & Drop Image</p>
+            <input type="file" id="imageInput">
+        </div>
+
+        <button onclick="uploadImage()">Detect Objects</button>
+        <button onclick="describeImage()">Describe Image</button>
+
+        <div id="loader" class="loader hidden"></div>
+
+        <div class="preview">
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <div class="stats">
+            <p id="statsText"></p>
+        </div>
+
+        <p id="error"></p>
+        <p id="description"></p>
+        <p id="imageDescription"></p>
+
+    </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
