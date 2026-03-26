@@ -1,25 +1,24 @@
-from flask import Flask, render_template, request, jsonify
-from ultralytics import YOLO
 import os
 import uuid
+from flask import Flask, request, jsonify, render_template
+from ultralytics import YOLO
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads'
 
-UPLOAD_FOLDER = "uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+# Ensure uploads folder exists
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
+# Load model (auto-downloads if not present)
 model = YOLO("yolov8n.pt")
 
 @app.route("/")
-def index():
+def home():
     return render_template("index.html")
 
 @app.route("/upload", methods=["POST"])
 def upload():
-
     if "image" not in request.files:
         return jsonify({"error": "No file uploaded"})
 
@@ -30,34 +29,31 @@ def upload():
 
     filename = str(uuid.uuid4()) + "_" + file.filename
     filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+
     file.save(filepath)
 
-    results = model(filepath)
+    results = model(filepath)[0]
 
-    detected_objects = []
+    objects = []
 
-    for r in results:
-        for box in r.boxes:
+    for box in results.boxes:
+        x1, y1, x2, y2 = box.xyxy[0]
 
-            cls = int(box.cls[0])
-            name = model.names[cls]
-            confidence = float(box.conf[0])
+        cls = int(box.cls[0])
+        name = model.names[cls]
+        confidence = round(float(box.conf[0]), 2)
 
-            x1, y1, x2, y2 = map(int, box.xyxy[0])
+        objects.append({
+            "name": name,
+            "confidence": confidence,
+            "x": int(x1),
+            "y": int(y1),
+            "width": int(x2 - x1),
+            "height": int(y2 - y1),
+            "description": f"A {name} is detected in the image."
+        })
 
-            description = f"A {name} is clearly visible in the image detected using AI."
-
-            detected_objects.append({
-                "name": name,
-                "confidence": round(confidence, 2),
-                "x": x1,
-                "y": y1,
-                "width": x2-x1,
-                "height": y2-y1,
-                "description": description
-            })
-
-    return jsonify(detected_objects)
+    return jsonify(objects)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
