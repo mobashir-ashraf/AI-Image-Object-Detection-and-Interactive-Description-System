@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from ultralytics import YOLO
 import os
+import uuid
 
 app = Flask(__name__)
 
@@ -27,7 +28,8 @@ def upload():
     if file.filename == "":
         return jsonify({"error": "No file selected"})
 
-    filepath = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
+    filename = str(uuid.uuid4()) + "_" + file.filename
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     file.save(filepath)
 
     results = model(filepath)
